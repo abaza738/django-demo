@@ -1,8 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.utils import timezone
 from django.views.generic import DetailView, ListView, CreateView, UpdateView
+from rest_framework import viewsets
 from .models import Post
 from .forms import PostForm
+from .serializers import PostSerializer
 
 
 # Create your views here.
@@ -34,18 +35,13 @@ class PostEdit(UpdateView):
     form_class = PostForm
     template_name = 'blog/post_edit.html'
 
-    # def get(self, request, pk):
-    #     post = get_object_or_404(Post, pk=pk)
-    #     form = PostForm(instance=post)
-    #     return render(request, self.template_name, {'form': form})
-    #
-    # def post(self, request, pk):
-    #     post = get_object_or_404(Post, pk=pk)
-    #     form = PostForm(request.POST, instance=post)
-    #     if form.is_valid():
-    #         post = form.save(commit=False)
-    #         post.author = request.user
-    #         post.published_date = timezone.now()
-    #         post.save()
-    #         return redirect('post_detail', pk=post.pk)
-    #     return render(request, self.template_name, {'form': form})
+
+# --- APIs ---
+
+
+class PostListApi(viewsets.ModelViewSet):
+    """
+    API endpoint to get a list of posts.
+    """
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
