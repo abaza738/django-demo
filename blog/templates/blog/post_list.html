@@ -7,9 +7,13 @@
 <p><u><i>suuup</i></u></p>
 
 <div class="posts">
-    {% for post in posts %}
+    {% for post in object_list %}
     <article>
+        {% if post.published_date %}
         <time>published: {{ post.published_date }}</time>
+        {% else %}
+        <span class="text-muted"><i>Not published</i></span>
+        {% endif %}
         <h2><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h2>
         <p>{{ post.text|linebreaksbr }}</p>
     </article>
