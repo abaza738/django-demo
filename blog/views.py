@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import DetailView, ListView, CreateView, UpdateView
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins, generics
 from .models import Post
 from .forms import PostForm
 from .serializers import PostSerializer
@@ -39,9 +39,34 @@ class PostEdit(UpdateView):
 # --- APIs ---
 
 
-class PostListApi(viewsets.ModelViewSet):
+class PostListApi(mixins.ListModelMixin,
+                  mixins.CreateModelMixin,
+                  generics.GenericAPIView):
     """
     API endpoint to get a list of posts.
     """
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, args, kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class PostDetail(mixins.RetrieveModelMixin,
+                 mixins.UpdateModelMixin,
+                 mixins.DestroyModelMixin,
+                 generics.GenericAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
